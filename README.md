@@ -7,7 +7,7 @@ Simple Markdown Journal
 
 A stupid simple journal to track whatever you want.
 Every entry in the calendar is saved as a markdown file.
-The destination can be where you set it in the config file.
+The destination of these file is configurable.
 
 ## Milestones
 
