@@ -1,36 +1,33 @@
-<p align="center"><img src="https://i.imgur.com/NrkTPe9.png"></p>
+Wilson
+======
 
-## Usage
+Simple Markdown Journal
 
-### Create an App
+> Okay. Here we go, Wilson. You don’t have to worry about anything. I’ll do all the paddling. You just hang on. -- Chuck Noland, Cast Away
 
-```zsh
-# with `nextron`
-$ nextron init my-app --example with-javascript-ant-design
+A stupid simple journal to track whatever you want.
+Every entry in the calendar is saved as a markdown file.
+The destination can be where you set it in the config file.
 
-# with npx
-$ npx create-nextron-app my-app --example with-javascript-ant-design
+## Milestones
 
-# with yarn
-$ yarn create nextron-app my-app --example with-javascript-ant-design
+- [ ] e2e encryption
+- [x] Markdown preview
+- [ ] Keyboard shortcuts
+- [ ] Tags
+- [ ] Upload images to Github
+- [ ] Save entries on Github
 
-# with pnpx
-$ pnpx create-nextron-app my-app --example with-javascript-ant-design
-```
-
-### Install Dependencies
+## Install Dependencies
 
 ```zsh
 $ cd my-app
 
 # using yarn or npm
-$ yarn (or `npm install`)
-
-# using pnpm
-$ pnpm install --shamefully-hoist
+$ yarn
 ```
 
-### Use it
+## Use it
 
 ```zsh
 # development mode
