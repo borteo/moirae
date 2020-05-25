@@ -1,7 +1,7 @@
 Wilson
 ======
 
-Simple Markdown Journal
+__Simple Markdown Journal__
 
 > Okay. Here we go, Wilson. You don’t have to worry about anything. I’ll do all the paddling. You just hang on. -- Chuck Noland, Cast Away
 
@@ -15,8 +15,22 @@ The destination of these file is configurable.
 - [x] Markdown preview
 - [ ] Keyboard shortcuts
 - [ ] Tags
-- [ ] Upload images to Github
+- [ ] Upload images/videos to Github
 - [ ] Save entries on Github
+
+Nice to have
+
+- [ ] Weather
+- [ ] Location
+- [ ] Maps
+
+## Depencies
+
+- Nextron
+- Moment
+- antd design
+- marked
+- gray matter
 
 ## Install Dependencies
 
