@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
+import { useHotkeys } from "react-hotkeys-hook";
 import marked from "marked";
 import Head from "next/Head";
-import Link from "next/Link";
-import { Layout, Form, Input, Button, PageHeader } from "antd";
+import { Layout, Form, Input, Button, PageHeader, Switch } from "antd";
+import { EyeOutlined } from "@ant-design/icons";
 
 const { TextArea } = Input;
 const { Item: FormItem } = Form;
@@ -22,6 +23,13 @@ const Home = () => {
   const [allEvents, setAllEvents] = useState(getAllEvents());
   const [showPreview, setShowPreview] = useState(true);
 
+  useHotkeys("cmd+s", () => {
+    handleSubmit();
+  });
+  useHotkeys("cmd+/", () => {
+    setShowPreview((prevMode) => !prevMode);
+  });
+
   const handleSubmit = () => {
     saveEvent(allEvents, date, content);
     setAllEvents(getAllEvents());
@@ -31,8 +39,8 @@ const Home = () => {
     setContent(event.target.value);
   };
 
-  const handlePreviewMode = (mode) => {
-    setShowPreview(mode);
+  const handleSwitchMode = () => {
+    setShowPreview(!showPreview);
   };
 
   return (
@@ -44,16 +52,11 @@ const Home = () => {
       <PageHeader
         title="Wilson"
         extra={[
-          <Button
-            key="1"
-            type="primary"
-            onClick={() => handlePreviewMode(true)}
-          >
-            Preview Mode
-          </Button>,
-          <Button key="2" onClick={() => handlePreviewMode(false)}>
-            Edit Mode
-          </Button>,
+          <Switch
+            checked={showPreview}
+            checkedChildren={<EyeOutlined />}
+            onChange={handleSwitchMode}
+          />,
         ]}
       />
       <Layout>
@@ -71,6 +74,7 @@ const Home = () => {
               {showPreview ? (
                 <FormItem wrapperCol={{ span: 15, offset: 5 }}>
                   <div
+                    style={{ fontSize: "1.25em" }}
                     dangerouslySetInnerHTML={{
                       __html: marked(content),
                     }}
@@ -79,10 +83,15 @@ const Home = () => {
               ) : (
                 <>
                   <FormItem wrapperCol={{ span: 15, offset: 5 }}>
-                    <TextArea rows={5} value={frontMatter} />
+                    <TextArea
+                      style={{ fontSize: "1.15em" }}
+                      rows={5}
+                      value={frontMatter}
+                    />
                   </FormItem>
                   <FormItem wrapperCol={{ span: 15, offset: 5 }}>
                     <TextArea
+                      style={{ fontSize: "1.15em" }}
                       rows={20}
                       value={content}
                       onChange={handleChange}
