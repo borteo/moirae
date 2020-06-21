@@ -12,15 +12,19 @@ The destination of these file is configurable.
 
 ## Milestones
 
+__Version 0.1__
 - [x] e2e encryption
 - [x] Markdown preview
 - [x] Keyboard shortcuts (⌘ + /: switch preview/edit mode, ⌘ + s: save entry)
+
+__Version 0.2__
 - [ ] Tags
 - [ ] Upload images/videos to Github
-- [ ] Save entries on Github
 
-Nice to have
+__Version 0.3__
+- [ ] Commit entries on Github
 
+__Nice to have__ 🍒
 - [ ] Weather
 - [ ] Location
 - [ ] Maps
