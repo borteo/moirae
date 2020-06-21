@@ -12,9 +12,9 @@ The destination of these file is configurable.
 
 ## Milestones
 
-- [ ] e2e encryption
+- [x] e2e encryption
 - [x] Markdown preview
-- [ ] Keyboard shortcuts
+- [x] Keyboard shortcuts (⌘ + /: switch preview/edit mode, ⌘ + s: save entry)
 - [ ] Tags
 - [ ] Upload images/videos to Github
 - [ ] Save entries on Github
@@ -27,11 +27,12 @@ Nice to have
 
 ## Depencies
 
-- Nextron
+- Nextron (<--- Get rid of it, I don't need it. Plain React + simple state container is enough)
 - Moment
 - antd design
 - marked
 - gray matter
+- simple-crypto-js
 
 ## Install Dependencies
 
