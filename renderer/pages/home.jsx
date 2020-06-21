@@ -1,32 +1,35 @@
-import React, { useState, useEffect } from "react";
-import moment from "moment";
-import { useHotkeys } from "react-hotkeys-hook";
-import marked from "marked";
-import Head from "next/Head";
-import { Layout, Form, Input, Button, PageHeader, Switch } from "antd";
-import { EyeOutlined } from "@ant-design/icons";
+import React, { useState, useEffect } from 'react';
+import moment from 'moment';
+import { useHotkeys } from 'react-hotkeys-hook';
+import marked from 'marked';
+import Head from 'next/Head';
+import { Layout, Form, Input, Button, PageHeader, Switch } from 'antd';
+import { EyeOutlined } from '@ant-design/icons';
 
 const { TextArea } = Input;
 const { Item: FormItem } = Form;
 
 const { Header, Content, Sider } = Layout;
 
-import EventsCalendar from "../components/eventsCalendar";
+import EventsCalendar from '../components/eventsCalendar';
 
-import "antd/dist/antd.css";
-import { saveEvent, getAllEvents } from "../stores/events";
+import 'antd/dist/antd.css';
+import { saveEvent, getAllEvents } from '../stores/events';
 
 const Home = () => {
-  const [frontMatter, setFrontMatter] = useState("");
-  const [content, setContent] = useState("");
+  const [frontMatter, setFrontMatter] = useState('');
+  const [content, setContent] = useState('');
   const [date, setDate] = useState(moment());
   const [allEvents, setAllEvents] = useState(getAllEvents());
   const [showPreview, setShowPreview] = useState(true);
 
-  useHotkeys("cmd+s", () => {
+  // ==================
+  // Keyboard Shortcuts
+  // ==================
+  useHotkeys('cmd+s', () => {
     handleSubmit();
   });
-  useHotkeys("cmd+/", () => {
+  useHotkeys('cmd+/', () => {
     setShowPreview((prevMode) => !prevMode);
   });
 
@@ -60,7 +63,7 @@ const Home = () => {
         ]}
       />
       <Layout>
-        <Sider width={"50%"} collapsible collapsedWidth="350">
+        <Sider width={'50%'} collapsible collapsedWidth="350">
           <EventsCalendar
             allEvents={allEvents}
             setDate={setDate}
@@ -74,7 +77,7 @@ const Home = () => {
               {showPreview ? (
                 <FormItem wrapperCol={{ span: 15, offset: 5 }}>
                   <div
-                    style={{ fontSize: "1.25em" }}
+                    style={{ fontSize: '1.25em' }}
                     dangerouslySetInnerHTML={{
                       __html: marked(content),
                     }}
@@ -84,14 +87,14 @@ const Home = () => {
                 <>
                   <FormItem wrapperCol={{ span: 15, offset: 5 }}>
                     <TextArea
-                      style={{ fontSize: "1.15em" }}
+                      style={{ fontSize: '1.15em' }}
                       rows={5}
                       value={frontMatter}
                     />
                   </FormItem>
                   <FormItem wrapperCol={{ span: 15, offset: 5 }}>
                     <TextArea
-                      style={{ fontSize: "1.15em" }}
+                      style={{ fontSize: '1.15em' }}
                       rows={20}
                       value={content}
                       onChange={handleChange}

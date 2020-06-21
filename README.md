@@ -1,10 +1,11 @@
 moirae
 ======
 
-In Greek Mythology The Moirae (in Greek Μοῖραι, meaning the “apportioners”, often called The Fates), were the three white-robed personifications of Destiny.
+In Greek Mythology The Moirae (Μοῖραι, meaning the “apportioners”, often called The Fates), were the three white-robed personifications of Destiny.
 They assigned to every person his or her fate or share in the scheme of things. 
 
-__Simple Markdown Journal__
+## Simple Markdown Journal
+
 A stupid simple journal to track whatever you want.
 Every entry in the calendar is saved as a markdown file.
 The destination of these file is configurable.
