@@ -1,50 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import moment from 'moment';
-import { useHotkeys } from 'react-hotkeys-hook';
-import marked from 'marked';
-import Head from 'next/Head';
-import { Layout, Form, Input, Button, PageHeader, Switch } from 'antd';
-import { EyeOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react'
+import moment from 'moment'
+import { useHotkeys } from 'react-hotkeys-hook'
+import marked from 'marked'
+import Head from 'next/Head'
+import { Layout, Form, Input, Button, PageHeader, Switch } from 'antd'
+import { EyeOutlined } from '@ant-design/icons'
 
-const { TextArea } = Input;
-const { Item: FormItem } = Form;
+const { TextArea } = Input
+const { Item: FormItem } = Form
 
-const { Header, Content, Sider } = Layout;
+const { Content, Sider } = Layout
 
-import EventsCalendar from '../components/eventsCalendar';
+import EventsCalendar from '../components/eventsCalendar'
 
-import 'antd/dist/antd.css';
-import { saveEvent, getAllEvents } from '../stores/events';
+import 'antd/dist/antd.css'
+import { deleteEvent, saveEvent, getAllEvents } from '../stores/events'
 
 const Home = () => {
-  const [frontMatter, setFrontMatter] = useState('');
-  const [content, setContent] = useState('');
-  const [date, setDate] = useState(moment());
-  const [allEvents, setAllEvents] = useState(getAllEvents());
-  const [showPreview, setShowPreview] = useState(true);
+  const [frontMatter, setFrontMatter] = useState('')
+  const [content, setContent] = useState('')
+  const [date, setDate] = useState(moment())
+  const [allEvents, setAllEvents] = useState(getAllEvents())
+  const [showPreview, setShowPreview] = useState(true)
 
   // ==================
   // Keyboard Shortcuts
   // ==================
   useHotkeys('cmd+s', () => {
-    handleSubmit();
-  });
+    handleSubmit()
+  })
   useHotkeys('cmd+/', () => {
-    setShowPreview((prevMode) => !prevMode);
-  });
+    setShowPreview((prevMode) => !prevMode)
+  })
 
   const handleSubmit = () => {
-    saveEvent(allEvents, date, content);
-    setAllEvents(getAllEvents());
-  };
+    saveEvent(allEvents, date, content)
+    setAllEvents(getAllEvents())
+  }
+
+  const handleCancel = () => {
+    setContent()
+  }
+
+  const handleDelete = () => {
+    setContent()
+    deleteEvent(allEvents, date)
+    setAllEvents(getAllEvents())
+  }
 
   const handleChange = (event) => {
-    setContent(event.target.value);
-  };
+    setContent(event.target.value)
+  }
 
   const handleSwitchMode = () => {
-    setShowPreview(!showPreview);
-  };
+    setShowPreview(!showPreview)
+  }
 
   return (
     <>
@@ -86,11 +96,7 @@ const Home = () => {
               ) : (
                 <>
                   <FormItem wrapperCol={{ span: 15, offset: 5 }}>
-                    <TextArea
-                      style={{ fontSize: '1.15em' }}
-                      rows={5}
-                      value={frontMatter}
-                    />
+                    <TextArea style={{ fontSize: '1.15em' }} rows={5} value={frontMatter} />
                   </FormItem>
                   <FormItem wrapperCol={{ span: 15, offset: 5 }}>
                     <TextArea
@@ -100,20 +106,21 @@ const Home = () => {
                       onChange={handleChange}
                     />
                   </FormItem>
-                  <FormItem
-                    style={{ marginTop: 40 }}
-                    wrapperCol={{ span: 15, offset: 5 }}
-                  >
-                    <Button
-                      onClick={handleSubmit}
-                      type="primary"
-                      shape="round"
-                      size="large"
-                    >
+                  <FormItem style={{ marginTop: 40 }} wrapperCol={{ span: 15, offset: 5 }}>
+                    <Button onClick={handleSubmit} type="primary" shape="round" size="large">
                       Submit
                     </Button>
-                    <Button size="large" style={{ marginLeft: 8 }}>
+                    <Button onClick={handleCancel} size="large" style={{ marginLeft: 8 }}>
                       Cancel
+                    </Button>
+                    <Button
+                      onClick={handleDelete}
+                      type="primary"
+                      danger
+                      size="large"
+                      style={{ marginLeft: 150 }}
+                    >
+                      Delete
                     </Button>
                   </FormItem>
                 </>
@@ -123,7 +130,7 @@ const Home = () => {
         </Layout>
       </Layout>
     </>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

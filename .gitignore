@@ -4,7 +4,7 @@ node_modules
 .env
 app
 dist
-
+entries
 
 # +----------------------------+
 # |    Keep .gitkeep files     |

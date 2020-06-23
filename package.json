@@ -2,14 +2,16 @@
   "private": true,
   "name": "wilson",
   "description": "Git Journal",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "author": "Matt Borgato <hello@matteoborgato.com>",
   "main": "app/background.js",
   "scripts": {
     "dev": "nextron",
     "build": "nextron build",
     "postinstall": "electron-builder install-app-deps",
-    "encrypt": "node ./scripts/encrypt.mjs"
+    "encrypt": "node ./scripts/encrypt.js",
+    "ghost": "node convertFromGhost.js",
+    "oneday": "node convertFromOneDay.js"
   },
   "dependencies": {
     "dotenv": "^8.2.0",

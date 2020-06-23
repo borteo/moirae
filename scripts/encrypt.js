@@ -3,8 +3,8 @@ const fs = require('fs-extra')
 const os = require('os')
 const SimpleCrypto = require('simple-crypto-js').default
 
-const HOME = os.homedir()
-const dirName = `${HOME}/Sites/journal/2020`
+// const HOME = os.homedir()
+const dirName = `./entries/2020`
 const backupDir = `${dirName}-original`
 const simpleCrypto = new SimpleCrypto(process.env.SECRET_KEY)
 

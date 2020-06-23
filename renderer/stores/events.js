@@ -38,6 +38,26 @@ modified: ${modifiedDate.format('YYYY-MM-DD[T]HH:mm:ss[Z]')}
 
 // ---- Exposed funcs ----
 
+export const deleteEvent = (allEvents, selectedDate) => {
+  const existingEv = allEvents.find((event) => {
+    return event.date.isSame(selectedDate, 'day')
+  })
+
+  // new event
+  if (!existingEv) {
+    return
+  }
+
+  // delete exisiting file
+  const filePath = `${dirName}/${existingEv.file}`
+  try {
+    fs.unlinkSync(filePath)
+    //file removed
+  } catch (err) {
+    console.error('error when deleting a file', err)
+  }
+}
+
 export const setEvent = ({ allEvents, selectedDate, isReading }) => {
   const existingEv = allEvents.find((event) => {
     return event.date.isSame(selectedDate, 'day')
