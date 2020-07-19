@@ -1,42 +1,67 @@
 const fs = require('fs')
 const matter = require('gray-matter')
-import moment from 'moment'
+import moment, { utc } from 'moment'
 import { encrypt, decrypt } from '../../main/helpers/crypto'
-import { dirName } from '../../config'
+import { dirName, dateFormat } from '../../config'
 
-const getNewEvent = (date) => {
-  const formattedDate = date.format('YYYY-MM-DD[T]HH:mm:ss[Z]')
+const formatFrontMatter = (frontMatter) => {
+  const text = ['---']
+  for (const property in frontMatter) {
+    text.push(`${property}: ${frontMatter[property]}`)
+  }
+  text.push('---')
 
-  const frontMatter = `---
-created: ${formattedDate}
-modified: ${formattedDate}
----
-`
-
-  return [frontMatter, '']
+  return text.join('\n')
 }
 
-const getModifiedEvent = ({ eventData, isReading = true }) => {
-  const decryptedData = decrypt(eventData)
+const getNewEventContent = (date) => {
+  const formattedDate = date.format(dateFormat)
 
-  if (matter.test(decryptedData) === false) {
+  const frontMatter = {
+    created: formattedDate,
+    modified: formattedDate,
+  }
+  return [formatFrontMatter(frontMatter), '']
+}
+
+const getEventContent = (eventData) => {
+  if (matter.test(eventData) === false) {
     console.error('this file does not contain a front matter')
     // show error ?
   }
-  const { content, data } = matter(decryptedData)
+  const { content, data } = matter(eventData)
+  const { created, modified, ...rest } = data
 
-  // when saving, I should override the modified date
-  const modifiedDate = isReading ? moment(data.modified).utc() : moment()
+  const frontMatter = {
+    created: moment(created).utc().format(dateFormat),
+    modified: moment(modified).utc().format(dateFormat),
+    ...rest,
+  }
 
-  const frontMatter = `---
-created: ${moment(data.created).utc().format('YYYY-MM-DD[T]HH:mm:ss[Z]')}
-modified: ${modifiedDate.format('YYYY-MM-DD[T]HH:mm:ss[Z]')}
----
-`
-  return [frontMatter, content]
+  return [formatFrontMatter(frontMatter), content]
+}
+
+const updateDates = (frontMatter) => {
+  const { _, data } = matter(frontMatter)
+  data.created = moment(data.created).utc().format(dateFormat)
+  data.modified = moment().format(dateFormat)
+
+  return formatFrontMatter(data)
 }
 
 // ---- Exposed funcs ----
+
+export const getAllEvents = () => {
+  const files = fs.readdirSync(dirName)
+  return files
+    .map((file) => {
+      const [date, extension] = file.split('.')
+      return { date: moment(date), extension: extension, file }
+    })
+    .filter((file) => {
+      return file.extension === 'md'
+    })
+}
 
 export const deleteEvent = (allEvents, selectedDate) => {
   const existingEv = allEvents.find((event) => {
@@ -58,63 +83,60 @@ export const deleteEvent = (allEvents, selectedDate) => {
   }
 }
 
-export const setEvent = ({ allEvents, selectedDate, isReading }) => {
-  const existingEv = allEvents.find((event) => {
-    return event.date.isSame(selectedDate, 'day')
+export const saveEvent = ({ allEvents, date, frontMatter, content }) => {
+  // I need to know the name of the file if it exists already
+  const event = allEvents.find((evnt) => {
+    return evnt.date.isSame(date, 'day')
   })
 
-  // new event
-  if (!existingEv) {
-    const creationDate = selectedDate.format('YYYY-MM-DD[T]HH:mm:ss[Z]')
-    const [newFrontMatter, newContent] = getNewEvent(selectedDate)
-    return {
-      frontMatter: newFrontMatter,
-      content: newContent,
-      filePath: `${dirName}/${creationDate}.md`,
-    }
+  let filePath
+
+  if (!event) {
+    // new event
+    const fileName = date.format(dateFormat)
+    filePath = `${dirName}/${fileName}.md`
+  } else {
+    // get existing event
+    filePath = `${dirName}/${event.file}`
   }
 
-  // update existing event
-  const filePath = `${dirName}/${existingEv.file}`
-  const data = fs.readFileSync(filePath, 'utf8')
-  const [frontMatter, content] = getModifiedEvent({
-    eventData: data,
-    isReading: isReading,
-  })
-
-  return {
-    frontMatter: frontMatter,
-    content: content,
-    filePath: filePath,
-  }
-}
-
-export const saveEvent = (allEvents, date, content) => {
-  const event = setEvent({
-    allEvents,
-    selectedDate: date,
-    isReading: false,
-  })
-  const newContent = event.frontMatter + content
+  const updatedFrontMatter = updateDates(frontMatter)
+  const newContent = updatedFrontMatter + content
 
   const encryptedContent = encrypt(newContent)
 
-  fs.writeFile(event.filePath, encryptedContent, (err) => {
+  fs.writeFile(filePath, encryptedContent, (err) => {
     if (err) {
       throw err
     }
-    console.log(`${event.filePath} created or updated ✅`)
+    console.log(`${filePath} created or updated ✅`)
   })
 }
 
-export const getAllEvents = () => {
-  const files = fs.readdirSync(dirName)
-  return files
-    .map((file) => {
-      const [date, extension] = file.split('.')
-      return { date: moment(date), extension: extension, file }
-    })
-    .filter((file) => {
-      return file.extension === 'md'
-    })
+export const getEvent = ({ allEvents, selectedDate }) => {
+  let frontMatter, content
+
+  const event = allEvents.find((evnt) => {
+    return evnt.date.isSame(selectedDate, 'day')
+  })
+
+  if (!event) {
+    // new event
+    ;[frontMatter, content] = getNewEventContent(selectedDate)
+  } else {
+    // get existing event
+    const filePath = `${dirName}/${event.file}`
+    const data = fs.readFileSync(filePath, 'utf8')
+
+    // decrypt the content
+    // TODO: add a check here if data is not encrypted
+    const decryptedData = decrypt(data)
+    const isReading = true
+    ;[frontMatter, content] = getEventContent(decryptedData, isReading)
+  }
+
+  return {
+    frontMatter,
+    content,
+  }
 }

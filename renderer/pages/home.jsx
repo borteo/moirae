@@ -3,7 +3,7 @@ import moment from 'moment'
 import { useHotkeys } from 'react-hotkeys-hook'
 import marked from 'marked'
 import Head from 'next/Head'
-import { Layout, Form, Input, Button, PageHeader, Switch } from 'antd'
+import { Layout, Form, Input, Button, Tag, Divider, PageHeader, Switch } from 'antd'
 import { EyeOutlined } from '@ant-design/icons'
 
 const { TextArea } = Input
@@ -16,8 +16,10 @@ import EventsCalendar from '../components/eventsCalendar'
 import 'antd/dist/antd.css'
 import { deleteEvent, saveEvent, getAllEvents } from '../stores/events'
 
+const tags = ['activity', 'book', 'documentary', 'event', 'film', 'series']
+
 const Home = () => {
-  const [frontMatter, setFrontMatter] = useState('')
+  const [frontMatter, setFrontMatter] = useState({})
   const [content, setContent] = useState('')
   const [date, setDate] = useState(moment())
   const [allEvents, setAllEvents] = useState(getAllEvents())
@@ -26,15 +28,17 @@ const Home = () => {
   // ==================
   // Keyboard Shortcuts
   // ==================
+  // TODO: they don't work when focusing on the textarea
   useHotkeys('cmd+s', () => {
     handleSubmit()
   })
   useHotkeys('cmd+/', () => {
     setShowPreview((prevMode) => !prevMode)
   })
+  // ==================
 
   const handleSubmit = () => {
-    saveEvent(allEvents, date, content)
+    saveEvent({ allEvents, date, frontMatter, content })
     setAllEvents(getAllEvents())
   }
 
@@ -43,13 +47,23 @@ const Home = () => {
   }
 
   const handleDelete = () => {
+    const response = confirm('Are you sure you want to delete it?')
+    if (!response) {
+      return
+    }
     setContent()
     deleteEvent(allEvents, date)
     setAllEvents(getAllEvents())
   }
 
+  // change main textarea
   const handleChange = (event) => {
     setContent(event.target.value)
+  }
+
+  // change front matter textarea
+  const handleFrontMatterChange = (event) => {
+    setFrontMatter(event.target.value)
   }
 
   const handleSwitchMode = () => {
@@ -59,11 +73,11 @@ const Home = () => {
   return (
     <>
       <Head>
-        <title>Wilson</title>
+        <title>Moriræ</title>
       </Head>
 
       <PageHeader
-        title="Wilson"
+        title="Moriræ"
         extra={[
           <Switch
             checked={showPreview}
@@ -96,7 +110,18 @@ const Home = () => {
               ) : (
                 <>
                   <FormItem wrapperCol={{ span: 15, offset: 5 }}>
-                    <TextArea style={{ fontSize: '1.15em' }} rows={5} value={frontMatter} />
+                    <TextArea
+                      style={{ fontSize: '1.15em' }}
+                      rows={5}
+                      value={frontMatter}
+                      onChange={handleFrontMatterChange}
+                    />
+                    <div>
+                      tags:{' '}
+                      {tags.map((tag) => {
+                        return <Tag>{tag}</Tag>
+                      })}
+                    </div>
                   </FormItem>
                   <FormItem wrapperCol={{ span: 15, offset: 5 }}>
                     <TextArea
@@ -118,7 +143,7 @@ const Home = () => {
                       type="primary"
                       danger
                       size="large"
-                      style={{ marginLeft: 150 }}
+                      style={{ marginLeft: 8 }}
                     >
                       Delete
                     </Button>
